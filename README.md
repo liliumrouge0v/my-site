@@ -40,14 +40,24 @@ VITE_SUPABASE_ANON_KEY=your-anon-public-key
 
 用第一步创建的账号登录即可开始使用。
 
-## 三、部署到 Vercel
+## 三、部署到 Cloudflare Pages
 
-1. 把本仓库推到 GitHub,在 Vercel 中 **Import** 该仓库。
-2. 框架会自动识别为 Vite。构建命令 `npm run build`,输出目录 `dist`。
-3. 在 **Settings → Environment Variables** 添加 `VITE_SUPABASE_URL` 和 `VITE_SUPABASE_ANON_KEY`(与本地相同)。
-4. 部署后,在 Supabase **Authentication → URL Configuration** 把 Vercel 域名加入 Site URL / Redirect URLs(邮箱链接登录需要)。
+1. 把本仓库推到 GitHub。
+2. 登录 [Cloudflare Dashboard](https://dash.cloudflare.com) → **Workers & Pages** → **Create** → **Pages** → **Connect to Git**,选择本仓库。
+3. 构建配置:
+   - **Framework preset**: `Vite`
+   - **Build command**: `npm run build`
+   - **Build output directory**: `dist`
+4. 展开 **Environment variables (Production)**,添加:
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_ANON_KEY`
+5. 点 **Save and Deploy**,约 1 分钟后得到 `xxx.pages.dev` 网址。
+6. 在 Supabase **Authentication → URL Configuration** 把该网址加入 **Site URL** 和 **Redirect URLs**(邮箱链接登录需要)。
 
-> 单页应用路由:Vercel 对 Vite 默认已处理 SPA 回退;若刷新子路径 404,在项目根添加 `vercel.json` 把所有路径 rewrite 到 `/index.html`。
+> SPA 路由由 `public/_redirects`(`/* /index.html 200`)处理,刷新子路径不会 404。
+> `VITE_` 变量在构建时写入,改动环境变量后需 **重新部署(Retry deployment)** 才生效。
+
+> 也可用 Vercel 部署:Import 仓库 → 自动识别 Vite → 加同样两个环境变量即可;SPA 路由由 `vercel.json` 处理。
 
 ## 四、公开分享给朋友
 
