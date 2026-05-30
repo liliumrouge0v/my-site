@@ -1,7 +1,9 @@
 node_modules
 dist
 dist-ssr
+preview-dist
 *.tsbuildinfo
+生活记录-预览.html
 *.local
 .env
 .env.local
