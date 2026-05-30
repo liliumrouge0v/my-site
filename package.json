@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "preview:build": "vite build --config vite.preview.config.ts",
+    "preview:static": "npm run build && vite build --ssr preview/ssr.tsx --outDir dist-ssr && node scripts/build-static-preview.mjs",
     "lint": "tsc -b --noEmit"
   },
   "dependencies": {

@@ -58,29 +58,52 @@ export default function StatsChart({ entries }: { entries: TimeEntryWithActivity
       </div>
 
       <div className="h-44 w-full">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={dayData} margin={{ top: 8, right: 0, left: -20, bottom: 0 }}>
-            <XAxis dataKey="label" tickLine={false} axisLine={false} fontSize={12} stroke="#94a3b8" />
-            <YAxis
-              tickFormatter={(v) => formatMinutesShort(v)}
-              tickLine={false}
-              axisLine={false}
-              fontSize={11}
-              stroke="#94a3b8"
-              width={40}
-            />
-            <Tooltip
-              cursor={{ fill: '#f1f5f9' }}
-              formatter={(v: number) => [formatDuration(v * 60), '时长']}
-              labelFormatter={(l) => `周${l}`}
-            />
-            <Bar dataKey="minutes" radius={[6, 6, 0, 0]}>
-              {dayData.map((d, i) => (
-                <Cell key={i} fill={d.isToday ? '#4f46e5' : '#c7d2fe'} />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
+        {typeof window === 'undefined' ? (
+          // 静态渲染回退(无 JS 环境):用纯 CSS 柱状图代替 recharts
+          <div className="flex h-full items-end gap-2 pt-2">
+            {dayData.map((d, i) => {
+              const max = Math.max(1, ...dayData.map((x) => x.minutes))
+              return (
+                <div key={i} className="flex flex-1 flex-col items-center gap-1">
+                  <div className="flex w-full flex-1 items-end">
+                    <div
+                      className="w-full rounded-t-md"
+                      style={{
+                        height: `${(d.minutes / max) * 100}%`,
+                        backgroundColor: d.isToday ? '#4f46e5' : '#c7d2fe',
+                      }}
+                    />
+                  </div>
+                  <span className="text-[11px] text-slate-400">{d.label}</span>
+                </div>
+              )
+            })}
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={dayData} margin={{ top: 8, right: 0, left: -20, bottom: 0 }}>
+              <XAxis dataKey="label" tickLine={false} axisLine={false} fontSize={12} stroke="#94a3b8" />
+              <YAxis
+                tickFormatter={(v) => formatMinutesShort(v)}
+                tickLine={false}
+                axisLine={false}
+                fontSize={11}
+                stroke="#94a3b8"
+                width={40}
+              />
+              <Tooltip
+                cursor={{ fill: '#f1f5f9' }}
+                formatter={(v: number) => [formatDuration(v * 60), '时长']}
+                labelFormatter={(l) => `周${l}`}
+              />
+              <Bar dataKey="minutes" radius={[6, 6, 0, 0]}>
+                {dayData.map((d, i) => (
+                  <Cell key={i} fill={d.isToday ? '#4f46e5' : '#c7d2fe'} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        )}
       </div>
 
       {byActivity.length > 0 && (
